@@ -22,3 +22,5 @@ Imports:
     rmarkdown,
     withr,
     readr
+URL: https://github.com/rundel/rmdsplit
+BugReports: https://github.com/rundel/rmdsplit/issues
