@@ -21,6 +21,7 @@ Imports:
     processx,
     rmarkdown,
     withr,
-    readr
+    readr,
+    progress
 URL: https://github.com/rundel/rmdsplit
 BugReports: https://github.com/rundel/rmdsplit/issues
