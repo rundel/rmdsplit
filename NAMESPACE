@@ -2,4 +2,5 @@
 
 export(rmd_split_render)
 export(wkhtml_renderer)
+export(wkhtml_renderer_debug)
 importFrom(dplyr,"%>%")

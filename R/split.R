@@ -116,7 +116,7 @@ rmd_split_render = function(
   render_func(rmd_file,  output)
 
   # Work through the splits, one output per
-  for(i in 10:12) {#seq_along(splits)) {
+  for(i in seq_along(splits)) {
     split = splits[i]
 
     start = match(split, secs)
@@ -150,19 +150,16 @@ rmd_split_render = function(
         preamble,
         function(node) {
           if (inherits(node, "rmd_chunk")) {
-            # include = FALSE w/ error = TRUE does not work
-            node$options$error = TRUE
-            node$options$include = TRUE
-            node$options$echo = FALSE
-            node$options$warning = FALSE
-            node$options$message = FALSE
-            node$options$results = '"asis"'
-            node$options$preamble = TRUE
+            node$options$include = FALSE
+            node$code = c(
+              "try({",
+              node$code,
+              "})"
+            )
           }
           node
         }
       ) %>%
-        c(list(knitr_hook_chunk()), .) %>%
         structure(class = c("rmd_ast", "list"))
 
       cur_sec = purrr::map(
@@ -230,7 +227,7 @@ wkhtml_renderer = function(file, out, debug = FALSE) {
     file,
     output_file = html_out,
     output_format = out_fmt,
-    quiet = FALSE #!debug
+    quiet = !debug
   )
 
   processx::run(
@@ -238,6 +235,11 @@ wkhtml_renderer = function(file, out, debug = FALSE) {
     c("-d", "200", html_out, out),
     echo_cmd = debug
   )
+}
+
+#' @export
+wkhtml_renderer_debug = function(file, out) {
+  wkhtml_renderer(file, out, TRUE)
 }
 
 
