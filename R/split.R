@@ -36,6 +36,10 @@ find_splits = function(rmd, headings) {
 #}
 
 
+clean_heading = function(x) {
+  stringr::str_trim(x) %>%
+    setNames(names(x))
+}
 
 #' @export
 rmd_split_render = function(
@@ -66,8 +70,10 @@ rmd_split_render = function(
     rmd[[1]]$subtitle = add_subtitle
 
   secs = parsermd::rmd_node_sections(rmd, levels = headings, drop_na = TRUE)
+  secs = purrr::map(secs, clean_heading)
 
   splits = find_splits(rmd_tmpl, headings)
+  splits = purrr::map(splits, clean_heading)
 
   pb = progress::progress_bar$new(
     total = length(splits) + 1,
