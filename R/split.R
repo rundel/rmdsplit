@@ -163,7 +163,7 @@ rmd_split_render = function(
       paste(collapse="\n")
 
     try({
-      rmd_file = glue::glue("test{i}.Rmd") #withr::local_tempfile(tmpdir = getwd(), fileext = ".Rmd")
+      rmd_file = withr::local_tempfile(tmpdir = getwd(), fileext = ".Rmd")
 
       readr::write_file(doc, rmd_file)
 
