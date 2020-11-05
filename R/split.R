@@ -1,17 +1,3 @@
-make_chunk_obj = function(
-  engine = "r", name = "",
-  options = structure(list(), names = character()),
-  code = character(),
-  indent = ""
-) {
-  structure(
-    list(
-      engine = engine, name = name, options = options, code = code, indent = indent
-    ),
-    class = "rmd_chunk"
-  )
-}
-
 find_splits = function(rmd, headings) {
   secs = parsermd::rmd_node_sections(rmd, levels = headings, drop_na = TRUE)
   sec_ids = match(secs, unique(secs))
@@ -26,37 +12,28 @@ find_splits = function(rmd, headings) {
 }
 
 
-deparse( quote(
-  local({
-    hook_error = knitr::knit_hooks$get("error")
-    knitr::knit_hooks$set(error = function(x, options) {
-      if (isTRUE(options$preamble)) x = character()
-      hook_error(x, options)
-    })
-  })
-) )
 
 
-knitr_hook_chunk = function() {
-  structure(
-    list(
-      engine = "r",
-      name = "knitr-hook-chunk",
-      options = list(include = FALSE),
-      code = deparse( quote(
-        local({
-          hook_error = knitr::knit_hooks$get("error")
-          knitr::knit_hooks$set(error = function(x, options) {
-            if (isTRUE(options$preamble)) x = character()
-            hook_error(x, options)
-          })
-        })
-      ) ),
-      indent = ""
-    ),
-    class = "rmd_chunk"
-  )
-}
+#knitr_hook_chunk = function() {
+#  structure(
+#    list(
+#      engine = "r",
+#      name = "knitr-hook-chunk",
+#      options = list(include = FALSE),
+#      code = deparse( quote(
+#        local({
+#          hook_error = knitr::knit_hooks$get("error")
+#          knitr::knit_hooks$set(error = function(x, options) {
+#            if (isTRUE(options$preamble)) x = character()
+#            hook_error(x, options)
+#          })
+#        })
+#      ) ),
+#      indent = ""
+#    ),
+#    class = "rmd_chunk"
+#  )
+#}
 
 
 
@@ -66,7 +43,8 @@ rmd_split_render = function(
   render_func = wkhtml_renderer,
   headings = 1:6, out_dir,
   prefix = "split_", ext = "pdf",
-  force_allow_errors = FALSE
+  force_allow_errors = FALSE,
+  add_subtitle = NULL
 ) {
   stopifnot(fs::dir_exists(out_dir))
 
@@ -84,7 +62,8 @@ rmd_split_render = function(
   rmd_tmpl = parsermd::parse_rmd(template)
 
   # FIXME dirty hack for now
-  rmd[[1]]$subtitle = fs::path_file(dir)
+  if (!is.null(add_subtitle))
+    rmd[[1]]$subtitle = add_subtitle
 
   secs = parsermd::rmd_node_sections(rmd, levels = headings, drop_na = TRUE)
 
