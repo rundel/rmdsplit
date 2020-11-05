@@ -199,7 +199,7 @@ wkhtml_renderer = function(file, out, debug = FALSE) {
   html_out = withr::local_tempfile(tmpdir = getwd(), fileext = ".html")
 
   # This is nonsense but needed to shut pandoc up
-  out_fmt = rmarkdown::html_document(keep_md=TRUE)
+  out_fmt = rmarkdown::html_document(keep_md = debug)
   out_fmt$pandoc$args = c(out_fmt$pandoc$args, "--metadata", "pagetitle=wkhtml")
 
   rmarkdown::render(
